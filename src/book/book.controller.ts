@@ -8,6 +8,7 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -17,6 +18,10 @@ import { UserEntity } from 'src/user/user.entity';
 import { EntryBookDTO } from './dto/entry.book.dto';
 import { BookService } from './book.service';
 import { SearchBookDTO } from './dto/search.book.dto';
+import { UpdateBookDTO } from './dto/update.book.dto';
+import { BookEntity } from './book.entity';
+import { issuedBookDTO } from './dto/issue.book.dto';
+import { DeleteResult, UpdateResult } from 'typeorm';
 
 @Controller('book')
 @UseGuards(AuthGuard())
@@ -44,5 +49,23 @@ export class BookController {
   @Delete('/:id')
   deleteBook(@GetUser() user: UserEntity, @Param('id') id: string) {
     return this.bookService.deleteBook(id);
+  }
+
+  @Put('/:id')
+  updateBook(
+    @GetUser() user: UserEntity,
+    @Body() updateBookDto: UpdateBookDTO,
+    @Param('id') id: number,
+  ) {
+    return this.bookService.updateBook(updateBookDto, id);
+  }
+
+  @Patch('/:id')
+  issuedBook(
+    @Param('id') id: number,
+
+    @Body() issuedBookDto: issuedBookDTO,
+  ): Promise<BookEntity> {
+    return this.bookService.issuedBook(issuedBookDto, id);
   }
 }

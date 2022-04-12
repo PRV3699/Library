@@ -16,7 +16,9 @@ export class UserRepository extends Repository<UserEntity> {
 
     // commit the row
     try {
-      return await user.save();
+      await user.save();
+      delete user.password;
+      return user;
     } catch {
       throw new BadRequestException('Duplicate entry');
     }
