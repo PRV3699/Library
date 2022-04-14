@@ -21,6 +21,7 @@ import { SearchBookDTO } from './dto/search.book.dto';
 import { UpdateBookDTO } from './dto/update.book.dto';
 import { BookEntity } from './book.entity';
 import { issuedBookDTO } from './dto/issue.book.dto';
+import { BookStatus } from './book.status.enum';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
 @Controller('book')
@@ -62,10 +63,20 @@ export class BookController {
 
   @Patch('/:id')
   issuedBook(
+    @GetUser() user: UserEntity,
     @Param('id') id: number,
 
     @Body() issuedBookDto: issuedBookDTO,
   ): Promise<BookEntity> {
     return this.bookService.issuedBook(issuedBookDto, id);
+  }
+
+  @Patch('/:id/:status')
+  returnBook(
+    @Param('id') id: number,
+    @Param('status') status: BookStatus,
+    @GetUser() user: UserEntity,
+  ): Promise<BookEntity> {
+    return this.bookService.returnBook(id, user, status);
   }
 }

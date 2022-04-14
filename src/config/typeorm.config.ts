@@ -9,7 +9,7 @@ export const TypeOrmConfiguration: TypeOrmModuleOptions = {
   port: 3306,
   host: 'localhost',
   type: 'mysql',
-  database: 'library2',
+  database: 'libraryV2',
   entities: [BookEntity, UserEntity],
 
   // true all the properties in the entity classes will be synchronized with database

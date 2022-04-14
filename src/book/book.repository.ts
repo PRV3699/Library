@@ -1,4 +1,11 @@
 import { EntityRepository, Repository } from 'typeorm';
+import {
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+
 import * as moment from 'moment';
 import { BookEntity } from './book.entity';
 import { SearchBookDTO } from './dto/search.book.dto';
@@ -32,7 +39,7 @@ export class BookRepository extends Repository<BookEntity> {
     book.description = entryBookDto.description;
     book.status = BookStatus.Available;
     // the logged in user own the book
-    book.user = user;
+    book.userId = user.id;
     // delete user property
     delete book.user;
     return this.save(book);
@@ -40,15 +47,52 @@ export class BookRepository extends Repository<BookEntity> {
   async issuedBook(issuedBookDto: issuedBookDTO, id: number) {
     const book = await this.findOne(id, { relations: ['user'] });
     if (!book) {
-     // throw new NotFoundException('book not found');
+      // throw new NotFoundException('book not found');
     }
-    book.status = BookStatus.Issued;
-    book.user.id = issuedBookDto.id;
+    if (book.status == BookStatus.Issued) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_ACCEPTABLE,
+          message: 'Book is already issued',
+        },
+        HttpStatus.NOT_ACCEPTABLE,
+      );
+    } else {
+      book.status = BookStatus.Issued;
+      book.userId = issuedBookDto.id;
 
-    book.issuedDate = moment().format('LLL');
-    book.returnDate = moment().add(15, 'days').calendar();
-    console.log(book.user);
-    await this.save(book);
-    return book;
+      book.issuedDate = moment().toISOString();
+      book.returnDate = moment().add(15, 'days').toISOString();
+      console.log(book.user);
+      return this.save(book);
+      // return book;
+    }
+  }
+  async returnBook(user: UserEntity, status: BookStatus, id: number) {
+    const book = await this.findOne(id);
+
+    if (!book) {
+      throw new NotFoundException('book not found');
+    }
+    if (user.id == 1) {
+      if (book.status == BookStatus.Issued) {
+        book.status = status;
+        // book.userId = null;
+        //book.issuedDate = null;
+        //book.returnDate = null;
+        console.log(book.user);
+      } else {
+        throw new HttpException(
+          {
+            status: HttpStatus.NOT_ACCEPTABLE,
+            message: 'Book is already available',
+          },
+          HttpStatus.NOT_ACCEPTABLE,
+        );
+      }
+      return this.save(book);
+    } else {
+      throw new UnauthorizedException('Only admin can return the book');
+    }
   }
 }

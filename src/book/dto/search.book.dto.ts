@@ -1,7 +1,5 @@
-import {  } from 'class-validator';
+import {} from 'class-validator';
 
 export class SearchBookDTO {
-  
-    search: string;
-    
+  search: string;
 }

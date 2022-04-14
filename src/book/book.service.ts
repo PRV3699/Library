@@ -8,6 +8,7 @@ import { BookRepository } from './book.repository';
 import { UpdateBookDTO } from './dto/update.book.dto';
 import { issuedBookDTO } from './dto/issue.book.dto';
 import { BookEntity } from './book.entity';
+import { BookStatus } from './book.status.enum';
 
 
 
@@ -52,9 +53,27 @@ export class BookService {
     async issuedBook(
       issuedBookDto: issuedBookDTO,
         id: number,
+        
       ): Promise<BookEntity> {
         return this.bookRepository.issuedBook(issuedBookDto, id);
       }
+
+      async returnBook(
+
+        
+    
+        id: number,
+    
+        user: UserEntity,
+    
+        status: BookStatus,
+    
+      ): Promise<BookEntity> {
+    
+        return this.bookRepository.returnBook( user, status, id);
+    
+      }
+
      async updateBook(
         updateBookDto: UpdateBookDTO,
           id: number,
@@ -65,7 +84,7 @@ export class BookService {
             title: book.title,
             author: book.author,
             description: book.description,
-          };
+        };
 
         const updateData = {
           title: updateBookDto.title,

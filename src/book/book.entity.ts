@@ -24,6 +24,9 @@ export class BookEntity {
   @Column()
   status: BookStatus;
 
+  @Column()
+  userId: number;
+
   @ManyToOne((type) => UserEntity, (user) => user.books, { eager: false })
   user: UserEntity;
 }
