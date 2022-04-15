@@ -13,6 +13,7 @@ import { EntryBookDTO } from './dto/entry.book.dto';
 import { UserEntity } from 'src/user/user.entity';
 import { BookStatus } from './book.status.enum';
 import { issuedBookDTO } from './dto/issue.book.dto';
+import { BookUserEntity } from 'src/bookuser/book.user.entity';
 
 @EntityRepository(BookEntity)
 export class BookRepository extends Repository<BookEntity> {
@@ -39,15 +40,18 @@ export class BookRepository extends Repository<BookEntity> {
     book.description = entryBookDto.description;
     book.status = BookStatus.Available;
     // the logged in user own the book
-    book.userId = user.id;
+    // book.userId = user.id;
     // delete user property
-    delete book.user;
     return this.save(book);
   }
-  async issuedBook(issuedBookDto: issuedBookDTO, id: number) {
+  async issuedBook(
+    issuedBookDto: issuedBookDTO,
+    id: number,
+    bookuser = BookUserEntity,
+  ) {
     const book = await this.findOne(id, { relations: ['user'] });
     if (!book) {
-      // throw new NotFoundException('book not found');
+      throw new NotFoundException('book not found');
     }
     if (book.status == BookStatus.Issued) {
       throw new HttpException(
@@ -59,16 +63,19 @@ export class BookRepository extends Repository<BookEntity> {
       );
     } else {
       book.status = BookStatus.Issued;
-      book.userId = issuedBookDto.id;
-
-      book.issuedDate = moment().toISOString();
-      book.returnDate = moment().add(15, 'days').toISOString();
-      console.log(book.user);
+      //book.userId = issuedBookDto.id;
+      //BookUserEntity.issuedDate = moment().toISOString();
+      //book.returnDate = moment().add(15, 'days').toISOString();
       return this.save(book);
       // return book;
     }
   }
-  async returnBook(user: UserEntity, status: BookStatus, id: number) {
+  async returnBook(
+    user: UserEntity,
+    status: BookStatus,
+    id: number,
+    bookuser = BookUserEntity,
+  ) {
     const book = await this.findOne(id);
 
     if (!book) {
@@ -77,10 +84,9 @@ export class BookRepository extends Repository<BookEntity> {
     if (user.id == 1) {
       if (book.status == BookStatus.Issued) {
         book.status = status;
-        // book.userId = null;
-        //book.issuedDate = null;
-        //book.returnDate = null;
-        console.log(book.user);
+        //bookuser.userId = null;
+        //bookuser.issuedDate = null;
+        //bookuser.returnDate = null;
       } else {
         throw new HttpException(
           {

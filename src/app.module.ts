@@ -3,11 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfiguration } from './config/typeorm.config';
 import { BookModule } from './book/book.module';
 import { UserModule } from './user/user.module';
+import { BookUserEntity } from './bookuser/book.user.entity';
 
 @Module({
   imports: [
     BookModule,
     UserModule,
+    BookUserEntity,
     // adding dependency for TypeORM
     TypeOrmModule.forRoot(TypeOrmConfiguration),
   ],
