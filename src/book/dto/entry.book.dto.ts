@@ -8,4 +8,7 @@ export class EntryBookDTO {
 
   @IsNotEmpty()
   description: string;
+
+  @IsNotEmpty()
+  quantity: number;
 }

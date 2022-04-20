@@ -17,7 +17,7 @@ export class BookEntity {
   description: string;
 
   @Column()
-  status: BookStatus;
+  quantity: number;
 
   @OneToMany(() => BookUserEntity, (bookUser) => bookUser.book, {
     eager: false,

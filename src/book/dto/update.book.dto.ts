@@ -3,8 +3,8 @@ import { Exclude } from 'class-transformer';
 import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class UpdateBookDTO {
-  @Exclude()
-  id: number;
+  // @Exclude()
+  // id: number;
 
   @IsNotEmpty()
   @IsOptional()
@@ -17,4 +17,8 @@ export class UpdateBookDTO {
   @IsNotEmpty()
   @IsOptional()
   description: string;
+
+  @IsNotEmpty()
+  @IsOptional()
+  quantity: number;
 }

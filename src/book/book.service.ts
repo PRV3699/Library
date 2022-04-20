@@ -6,7 +6,8 @@ import { SearchBookDTO } from './dto/search.book.dto';
 import { UserEntity } from 'src/user/user.entity';
 import { BookRepository } from './book.repository';
 import { UpdateBookDTO } from './dto/update.book.dto';
-import { issuedBookDTO } from './dto/issue.book.dto';
+import { IssuedBookDTO } from './dto/issue.book.dto';
+import { ReturnBookDTO } from './dto/return.book.dto';
 import { BookEntity } from './book.entity';
 import { BookStatus } from './book.status.enum';
 
@@ -19,12 +20,12 @@ export class BookService {
 
 
     // return books 
-    getBooks(searchBookDto: SearchBookDTO, user: UserEntity) {
-       return this.bookRepository.getBooks(searchBookDto, user);
+    getBooks(searchBookDto: SearchBookDTO) {
+       return this.bookRepository.getBooks(searchBookDto);
     }
     // enter a new book 
-    entryBook(entryBookDto: EntryBookDTO, user: UserEntity) {
-        return this.bookRepository.entryBook(entryBookDto, user);
+    entryBook(entryBookDto: EntryBookDTO) {
+        return this.bookRepository.entryBook(entryBookDto);
     }
 
     async getBookById(id: number) {
@@ -51,57 +52,23 @@ export class BookService {
 
 
     async issuedBook(
-      issuedBookDto: issuedBookDTO,
+      issuedBookDto: IssuedBookDTO,
         id: number,
-        
-      ): Promise<BookEntity> {
+        ) {
         return this.bookRepository.issuedBook(issuedBookDto, id);
       }
 
-      async returnBook(
-
-        
-    
-        id: number,
-    
-        user: UserEntity,
-    
-        status: BookStatus,
-    
-      ): Promise<BookEntity> {
-    
-        return this.bookRepository.returnBook( user, status, id);
-    
+    async returnBook(returnBookDto: ReturnBookDTO, user: UserEntity) {
+        return this.bookRepository.returnBook(returnBookDto, user);
       }
-
-     async updateBook(
-        updateBookDto: UpdateBookDTO,
-          id: number,
-        )
-        {
-            const book=await this.getBookById(id)
-             const OldData = {
-            title: book.title,
-            author: book.author,
-            description: book.description,
-        };
-
-        const updateData = {
-          title: updateBookDto.title,
-          author: updateBookDto.author,
-          description: updateBookDto.description,
-        };
-        if(updateData.title !== undefined){
-            updateData.title=OldData.title
+      
+    
+    async updateBook(
+      updateBookDto: UpdateBookDTO,
+      id: number,
+      ):
+       Promise<UpdateBookDTO> {
+         return this.bookRepository.updateBook(updateBookDto,id);
         }
-        if(updateData.author  !== undefined){
-            updateData.author==OldData.author
-        }
-        if(updateData.description  !== undefined){
-            updateData.description==OldData.description
-        }
-        await this.bookRepository.update(id, updateData);
-        return  updateData;
-    }
 }
 

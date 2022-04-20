@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Controller,
   UseGuards,
@@ -20,8 +21,8 @@ import { BookService } from './book.service';
 import { SearchBookDTO } from './dto/search.book.dto';
 import { UpdateBookDTO } from './dto/update.book.dto';
 import { BookEntity } from './book.entity';
-import { issuedBookDTO } from './dto/issue.book.dto';
-import { BookStatus } from './book.status.enum';
+import { IssuedBookDTO } from './dto/issue.book.dto';
+import { ReturnBookDTO } from './dto/return.book.dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
 @Controller('book')
@@ -39,13 +40,13 @@ export class BookController {
   ) {
     // 1. enter  a new book details
     // 2. return all book details
-    return this.bookService.entryBook(entryBookDto, user);
+    return this.bookService.entryBook(entryBookDto);
   }
 
   @Get()
   @UseGuards(AuthGuard())
   getBooks(@GetUser() user: UserEntity, @Query() searchBookDto: SearchBookDTO) {
-    return this.bookService.getBooks(searchBookDto, user);
+    return this.bookService.getBooks(searchBookDto);
   }
   @Delete('/:id')
   deleteBook(@GetUser() user: UserEntity, @Param('id') id: string) {
@@ -54,9 +55,9 @@ export class BookController {
 
   @Put('/:id')
   updateBook(
-    @GetUser() user: UserEntity,
+    //@GetUser() user: UserEntity,
     @Body() updateBookDto: UpdateBookDTO,
-    @Param('id') id: number,
+    @Param('id') id: number
   ) {
     return this.bookService.updateBook(updateBookDto, id);
   }
@@ -66,17 +67,17 @@ export class BookController {
     @GetUser() user: UserEntity,
     @Param('id') id: number,
 
-    @Body() issuedBookDto: issuedBookDTO,
-  ): Promise<BookEntity> {
+    @Body() issuedBookDto: IssuedBookDTO,
+  ) {
     return this.bookService.issuedBook(issuedBookDto, id);
   }
 
-  @Patch('/:id/:status')
+  @Delete()
   returnBook(
-    @Param('id') id: number,
-    @Param('status') status: BookStatus,
     @GetUser() user: UserEntity,
-  ): Promise<BookEntity> {
-    return this.bookService.returnBook(id, user, status);
+
+    @Body() returnBookDto: ReturnBookDTO,
+  ) {
+    return this.bookService.returnBook(returnBookDto, user);
   }
 }
