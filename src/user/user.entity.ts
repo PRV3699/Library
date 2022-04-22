@@ -21,6 +21,9 @@ export class UserEntity extends BaseEntity {
   @Column()
   password: string;
 
+  @Column()
+  email: string;
+
   @OneToMany(() => BookUserEntity, (bookUser) => bookUser.user, { eager: true })
   bookUsers: BookUserEntity[];
 

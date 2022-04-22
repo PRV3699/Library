@@ -14,6 +14,8 @@ export class UserRepository extends Repository<UserEntity> {
     // encrypt the password
     user.password = `${crypto.MD5(authCredentialsDTO.password)}`;
 
+    user.email = authCredentialsDTO.email;
+
     // commit the row
     try {
       await user.save();

@@ -20,17 +20,19 @@ export class BookUserRepository extends Repository<BookUserEntity> {
     }
   }
 
-  async issuedBook(issuedBookDto: IssuedBookDTO, id: number) {
-    await this.validateIssuedBookWithUser(issuedBookDto.id, id);
+  async issuedBook(issuedBookDto: IssuedBookDTO) {
+    await this.validateIssuedBookWithUser(
+      issuedBookDto.userId,
+      issuedBookDto.id,
+    );
     const bookuser = this.create({
-      userId: issuedBookDto.id,
-      bookId: id,
+      userId: issuedBookDto.userId,
+      bookId: issuedBookDto.id,
       issuedDate: moment().toISOString(),
-      returnDate: moment().add(7, 'days').toISOString(),
+      returnDate: moment().add(1, 'day').format('L'),
     });
     return this.save(bookuser);
   }
-
   async checkIssuedBookWithUser(bookId: number, userId: number) {
     const bookuser = await this.find({ where: { bookId, userId } });
 
@@ -48,5 +50,16 @@ export class BookUserRepository extends Repository<BookUserEntity> {
       returnBookDto.userId,
     );
     await this.softDelete(result);
+  }
+
+  async mailReceivers() {
+    const tomorrow = moment().add(1, 'day').format('L');
+    const query = this.createQueryBuilder('bookuser');
+    query
+      .select(['bookuser.bookId', 'bookuser.userId'])
+      .where('bookuser.returnDate= :tomorrow', { tomorrow: `${tomorrow}` })
+      .execute();
+    const users = await query.getMany();
+    return users;
   }
 }

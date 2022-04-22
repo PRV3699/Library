@@ -90,14 +90,14 @@ export class BookRepository extends Repository<BookEntity> {
     await this.update(id, updateData);
     return updateData;
   }
-  async issuedBook(issuedBookDto: IssuedBookDTO, id: number) {
-    const book = await this.findOne(id);
+  async issuedBook(issuedBookDto: IssuedBookDTO) {
+    const book = await this.findOne(issuedBookDto.id);
     if (!book) {
       throw new NotFoundException('book not found');
     }
     this.validateBookQuantity(book.quantity);
     const bookUserRepository = getCustomRepository(BookUserRepository);
-    const bookuser = await bookUserRepository.issuedBook(issuedBookDto, id);
+    const bookuser = await bookUserRepository.issuedBook(issuedBookDto);
     book.quantity = book.quantity - 1;
     await this.save(book);
     return bookUserRepository.save(bookuser);

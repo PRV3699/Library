@@ -62,14 +62,14 @@ export class BookController {
     return this.bookService.updateBook(updateBookDto, id);
   }
 
-  @Patch('/:id')
+  @Patch()
   issuedBook(
     @GetUser() user: UserEntity,
-    @Param('id') id: number,
+   
 
     @Body() issuedBookDto: IssuedBookDTO,
   ) {
-    return this.bookService.issuedBook(issuedBookDto, id);
+    return this.bookService.issuedBook(issuedBookDto);
   }
 
   @Delete()

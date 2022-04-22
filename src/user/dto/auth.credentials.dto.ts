@@ -9,4 +9,7 @@ export class AuthCredentialsDTO {
   @MinLength(4)
   @MaxLength(10)
   password: string;
+
+  @IsNotEmpty()
+  email: string;
 }
